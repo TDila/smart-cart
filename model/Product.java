@@ -9,9 +9,9 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.List;
 
+
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Product {
@@ -28,4 +28,13 @@ public class Product {
     private Category category;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
+
+    public Product(String name, String brand, BigDecimal price, Integer inventory, String description, Category category) {
+        this.name = name;
+        this.description = description;
+        this.brand = brand;
+        this.price = price;
+        this.inventory = inventory;
+        this.category = category;
+    }
 }
