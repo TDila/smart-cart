@@ -1,13 +1,18 @@
 package com.vulcan.smartcart.service.product;
 
-import com.vulcan.smartcart.exceptions.ProductNotFoundException;
+import com.vulcan.smartcart.dto.ImageDTO;
+import com.vulcan.smartcart.dto.ProductDTO;
+import com.vulcan.smartcart.exceptions.ResourceNotFoundException;
 import com.vulcan.smartcart.model.Category;
+import com.vulcan.smartcart.model.Image;
 import com.vulcan.smartcart.model.Product;
 import com.vulcan.smartcart.repository.CategoryRepository;
+import com.vulcan.smartcart.repository.ImageRepository;
 import com.vulcan.smartcart.repository.ProductRepository;
 import com.vulcan.smartcart.request.AddProductRequest;
 import com.vulcan.smartcart.request.UpdateProductRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +24,8 @@ public class ProductService implements IProductService{
     // if you're using @RequiredArgsConstructor always make sure to use 'final'
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ImageRepository imageRepository;
+    private final ModelMapper modelMapper;
     @Override
     public Product addProduct(AddProductRequest request) {
         //check if the category is found  in the DB
@@ -48,12 +55,12 @@ public class ProductService implements IProductService{
     @Override
     public Product getProductById(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found!"));
     }
 
     @Override
     public void deleteProductById(Long id) {
-        productRepository.findById(id).ifPresentOrElse(productRepository::delete, () -> {throw new ProductNotFoundException("Product not found!");});
+        productRepository.findById(id).ifPresentOrElse(productRepository::delete, () -> {throw new ResourceNotFoundException("Product not found!");});
     }
 
     @Override
@@ -61,7 +68,7 @@ public class ProductService implements IProductService{
         return productRepository.findById(productId)
                 .map(existingProduct -> updateExistingProduct(existingProduct, request))
                 .map(productRepository::save)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found!"));
     }
 
     private Product updateExistingProduct(Product existingProduct, UpdateProductRequest request){
@@ -109,5 +116,21 @@ public class ProductService implements IProductService{
     @Override
     public Long countProductsByBrandAndName(String brand, String name) {
         return productRepository.countByBrandAndName(brand, name);
+    }
+
+    @Override
+    public List<ProductDTO> getConvertedProducts(List<Product> products){
+        return products.stream().map(this::convertToDTO).toList();
+    }
+
+    @Override
+    public ProductDTO convertToDTO(Product product){
+        ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+        List<Image> images = imageRepository.findByProductId(product.getId());
+        List<ImageDTO> imageDTOS = images.stream()
+                .map(image -> modelMapper.map(image, ImageDTO.class))
+                .toList();
+        productDTO.setImages(imageDTOS);
+        return productDTO;
     }
 }

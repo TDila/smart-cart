@@ -23,7 +23,7 @@ public class Product {
     private String brand;
     private BigDecimal price;
     private Integer inventory;
-    @ManyToOne // cascade type all
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
     private Category category;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
