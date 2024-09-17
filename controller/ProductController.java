@@ -1,7 +1,7 @@
 package com.vulcan.smartcart.controller;
 
-import com.vulcan.smartcart.dto.ProductDTO;
-import com.vulcan.smartcart.exceptions.ResourceNotFoundException;
+import com.vulcan.smartcart.dto.ProductDto;
+import com.vulcan.smartcart.exceptions.AlreadyExistsException;
 import com.vulcan.smartcart.model.Product;
 import com.vulcan.smartcart.request.AddProductRequest;
 import com.vulcan.smartcart.request.UpdateProductRequest;
@@ -22,7 +22,7 @@ public class ProductController {
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllProducts(){
         List<Product> products = productService.getAllProducts();
-        List<ProductDTO> convertedProducts = productService.getConvertedProducts(products);
+        List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
         return ResponseEntity.ok(new ApiResponse("success", convertedProducts));
     }
 
@@ -30,7 +30,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId){
         try {
             Product product = productService.getProductById(productId);
-            ProductDTO productDTO = productService.convertToDTO(product);
+            ProductDto productDTO = productService.convertToDTO(product);
             return ResponseEntity.ok(new ApiResponse("success", productDTO));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
@@ -40,17 +40,17 @@ public class ProductController {
     public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product){
         try {
             Product theProduct = productService.addProduct(product);
-            ProductDTO productDTO = productService.convertToDTO(theProduct);
+            ProductDto productDTO = productService.convertToDTO(theProduct);
             return ResponseEntity.ok(new ApiResponse("Add product success!", productDTO));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
+        } catch (AlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(), null));
         }
     }
     @PutMapping("/product/{productId}/update")
     public ResponseEntity<ApiResponse> updateProduct(@RequestBody UpdateProductRequest request, @PathVariable Long productId){
         try {
             Product theProduct = productService.updateProduct(request, productId);
-            ProductDTO productDTO = productService.convertToDTO(theProduct);
+            ProductDto productDTO = productService.convertToDTO(theProduct);
             return ResponseEntity.ok(new ApiResponse("Update product success!", productDTO));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
@@ -72,7 +72,7 @@ public class ProductController {
             if(products.isEmpty()){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("No products found", null));
             }
-            List<ProductDTO> convertedProducts = productService.getConvertedProducts(products);
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
             return ResponseEntity.ok(new ApiResponse("success", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
@@ -86,7 +86,7 @@ public class ProductController {
             if(products.isEmpty()){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("No products found", null));
             }
-            List<ProductDTO> convertedProducts = productService.getConvertedProducts(products);
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
             return ResponseEntity.ok(new ApiResponse("success", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("error", e.getMessage()));
@@ -99,7 +99,7 @@ public class ProductController {
             if(products.isEmpty()){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("No products found", null));
             }
-            List<ProductDTO> convertedProducts = productService.getConvertedProducts(products);
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
             return ResponseEntity.ok(new ApiResponse("success", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("error", e.getMessage()));
@@ -113,7 +113,7 @@ public class ProductController {
             if(products.isEmpty()){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("No products found", null));
             }
-            List<ProductDTO> convertedProducts = productService.getConvertedProducts(products);
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
             return ResponseEntity.ok(new ApiResponse("success", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("error", e.getMessage()));
@@ -126,7 +126,7 @@ public class ProductController {
             if(products.isEmpty()){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("No products found", null));
             }
-            List<ProductDTO> convertedProducts = productService.getConvertedProducts(products);
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
             return ResponseEntity.ok(new ApiResponse("success", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("error", e.getMessage()));

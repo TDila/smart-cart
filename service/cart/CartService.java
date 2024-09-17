@@ -2,6 +2,7 @@ package com.vulcan.smartcart.service.cart;
 
 import com.vulcan.smartcart.exceptions.ResourceNotFoundException;
 import com.vulcan.smartcart.model.Cart;
+import com.vulcan.smartcart.model.User;
 import com.vulcan.smartcart.repository.CartItemRepository;
 import com.vulcan.smartcart.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,11 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @RequiredArgsConstructor
 public class CartService implements ICartService{
+
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
 
@@ -43,11 +46,17 @@ public class CartService implements ICartService{
     }
 
     @Override
-    public Long initializeNewCart() {
-        Cart newCart = new Cart();
-        Long newCartId = cartIdGenerator.incrementAndGet();
-        newCart.setId(newCartId);
-        return cartRepository.save(newCart).getId();
+    public Cart initializeNewCart(User user) {
+        return Optional.ofNullable(getCartByUserId(user.getId()))
+                .orElseGet(() -> {
+                    Cart cart = new Cart();
+                    cart.setUser(user);
+                    return cartRepository.save(cart);
+                });
+    }
 
+    @Override
+    public Cart getCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId);
     }
 }

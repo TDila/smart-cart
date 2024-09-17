@@ -1,7 +1,8 @@
 package com.vulcan.smartcart.service.product;
 
 import com.vulcan.smartcart.dto.ImageDTO;
-import com.vulcan.smartcart.dto.ProductDTO;
+import com.vulcan.smartcart.dto.ProductDto;
+import com.vulcan.smartcart.exceptions.AlreadyExistsException;
 import com.vulcan.smartcart.exceptions.ResourceNotFoundException;
 import com.vulcan.smartcart.model.Category;
 import com.vulcan.smartcart.model.Image;
@@ -32,6 +33,11 @@ public class ProductService implements IProductService{
         //if yes, set it as the new product category
         //if no, then save it as a new category
         //then set as the new product category.
+
+        if(productExists(request.getName(), request.getBrand())){
+            throw new AlreadyExistsException(request.getBrand()+" "+request.getName()+" already exists, you may update this product instead.");
+        }
+
         Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
                 .orElseGet(() -> {
                     Category newCategory = new Category(request.getCategory().getName());
@@ -39,6 +45,10 @@ public class ProductService implements IProductService{
                 });
         request.setCategory(category);
         return productRepository.save(createProduct(request, category));
+    }
+
+    private boolean productExists(String name, String brand){
+        return productRepository.existsByNameAndBrand(name, brand);
     }
 
     private Product createProduct(AddProductRequest request, Category category){
@@ -119,13 +129,13 @@ public class ProductService implements IProductService{
     }
 
     @Override
-    public List<ProductDTO> getConvertedProducts(List<Product> products){
+    public List<ProductDto> getConvertedProducts(List<Product> products){
         return products.stream().map(this::convertToDTO).toList();
     }
 
     @Override
-    public ProductDTO convertToDTO(Product product){
-        ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+    public ProductDto convertToDTO(Product product){
+        ProductDto productDTO = modelMapper.map(product, ProductDto.class);
         List<Image> images = imageRepository.findByProductId(product.getId());
         List<ImageDTO> imageDTOS = images.stream()
                 .map(image -> modelMapper.map(image, ImageDTO.class))

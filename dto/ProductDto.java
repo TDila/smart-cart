@@ -1,14 +1,13 @@
 package com.vulcan.smartcart.dto;
 
 import com.vulcan.smartcart.model.Category;
-import com.vulcan.smartcart.model.Image;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class ProductDTO {
+public class ProductDto {
     private Long id;
     private String name;
     private String description;

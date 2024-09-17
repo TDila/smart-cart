@@ -1,6 +1,6 @@
 package com.vulcan.smartcart.service.product;
 
-import com.vulcan.smartcart.dto.ProductDTO;
+import com.vulcan.smartcart.dto.ProductDto;
 import com.vulcan.smartcart.model.Product;
 import com.vulcan.smartcart.request.AddProductRequest;
 import com.vulcan.smartcart.request.UpdateProductRequest;
@@ -20,7 +20,7 @@ public interface IProductService {
     List<Product> getProductsByBrandAndName(String brand, String name);
     Long countProductsByBrandAndName(String brand, String name);
 
-    List<ProductDTO> getConvertedProducts(List<Product> products);
+    List<ProductDto> getConvertedProducts(List<Product> products);
 
-    ProductDTO convertToDTO(Product product);
+    ProductDto convertToDTO(Product product);
 }
