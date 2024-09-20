@@ -25,7 +25,9 @@ public class ImageController {
     private final IImageService imageService;
 
     @PostMapping("/upload")
-    public ResponseEntity<ApiResponse> saveImages(@RequestParam List<MultipartFile> files,@RequestParam Long productId){
+    public ResponseEntity<ApiResponse> saveImages(
+            @RequestParam("files") List<MultipartFile> files
+            ,@RequestParam("productId") Long productId){
         try {
             List<ImageDTO> imageDTOS = imageService.saveImages(files, productId);
             return ResponseEntity.ok(new ApiResponse("Upload success", imageDTOS));
@@ -43,7 +45,7 @@ public class ImageController {
                 .body(resource);
     }
 
-    @PutMapping("/image/{imageId}/update")
+    @PutMapping("/{imageId}")
     public ResponseEntity<ApiResponse> updateImage(@PathVariable Long imageId, @RequestBody MultipartFile file){
         try {
             Image image = imageService.getImageById(imageId);
@@ -57,7 +59,7 @@ public class ImageController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Update failed!", HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
-    @DeleteMapping("/image/{imageId}/delete")
+    @DeleteMapping("/{imageId}")
     public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId){
         try {
             Image image = imageService.getImageById(imageId);

@@ -21,7 +21,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class UserController {
     private final IUserService userService;
 
-    @GetMapping("/{userId}/user")
+    @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse> getUserById(@PathVariable Long userId) {
         try {
             User user = userService.getUserById(userId);
@@ -31,7 +31,7 @@ public class UserController {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
     }
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<ApiResponse> createUser(@RequestBody CreateUserRequest request) {
         try {
             User user = userService.createUser(request);
@@ -41,7 +41,7 @@ public class UserController {
             return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null));
         }
     }
-    @PutMapping("/{userId}/update")
+    @PutMapping("/{userId}")
     public ResponseEntity<ApiResponse> updateUser(@RequestBody UserUpdateRequest request, @PathVariable Long userId) {
         try {
             User user = userService.updateUser(request, userId);
@@ -51,7 +51,7 @@ public class UserController {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
     }
-    @DeleteMapping("/{userId}/delete")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable Long userId) {
         try {
             userService.deleteUser(userId);

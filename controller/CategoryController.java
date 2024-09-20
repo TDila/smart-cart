@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("${api.prefix}/categories")
 public class CategoryController {
     private final ICategoryService categoryService;
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<ApiResponse> getAllCategories(){
         try {
             List<Category> categories = categoryService.getAllCategories();
@@ -27,7 +27,7 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Error:", HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<ApiResponse> addCategory(@RequestBody Category name){
         try {
             Category theCategory = categoryService.addCategory(name);
@@ -37,7 +37,7 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/category/{id}/category")
+    @GetMapping("/id/{id}")
     public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id){
         try {
             Category theCategory = categoryService.getCategoryById(id);
@@ -47,7 +47,7 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/category/{name}/category")
+    @GetMapping("/category/{name}")
     public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name){
         try {
             Category theCategory = categoryService.getCategoryByName(name);
@@ -57,7 +57,7 @@ public class CategoryController {
         }
     }
 
-    @DeleteMapping("/category/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id){
         try {
             categoryService.deleteCategoryById(id);
@@ -67,7 +67,7 @@ public class CategoryController {
         }
     }
 
-    @PutMapping("/category/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> updateCategory(@PathVariable Long id, @RequestBody Category category){
         try {
             Category updatedCategory = categoryService.updateCategory(category, id);

@@ -1,5 +1,6 @@
 package com.vulcan.smartcart.controller;
 
+import com.vulcan.smartcart.dto.CartDto;
 import com.vulcan.smartcart.exceptions.ResourceNotFoundException;
 import com.vulcan.smartcart.model.Cart;
 import com.vulcan.smartcart.response.ApiResponse;
@@ -18,16 +19,17 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequiredArgsConstructor
 public class CartController {
     private final ICartService cartService;
-    @GetMapping("/{cartId}/my-cart")
+    @GetMapping("/{cartId}")
     public ResponseEntity<ApiResponse> getCart(@PathVariable Long cartId){
         try {
             Cart cart = cartService.getCart(cartId);
-            return ResponseEntity.ok(new ApiResponse("Success", cart));
+            CartDto cartDto = cartService.convertToDto(cart);
+            return ResponseEntity.ok(new ApiResponse("Success", cartDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
     }
-    @DeleteMapping("/{cartId}/clear")
+    @DeleteMapping("/{cartId}")
     public ResponseEntity<ApiResponse> clearCart(@PathVariable Long cartId){
         try {
             cartService.clearCart(cartId);
@@ -36,7 +38,7 @@ public class CartController {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
     }
-    @GetMapping("/{cartId}/cart/total-price")
+    @GetMapping("/{cartId}/total-price")
     public ResponseEntity<ApiResponse> getTotalAmount( @PathVariable Long cartId) {
         try {
             BigDecimal totalPrice = cartService.getTotalPrice(cartId);

@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("${api.prefix}/orders")
 public class OrderController {
     private final IOrderService orderService;
-    @PostMapping("/order")
+    @PostMapping
     public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId){
         try {
             Order order =  orderService.placeOrder(userId);
@@ -27,21 +27,21 @@ public class OrderController {
             return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Error Occurred!", e.getMessage()));
         }
     }
-    @GetMapping("/{orderId}/order")
+    @GetMapping("/{orderId}")
     public ResponseEntity<ApiResponse> getOrderById(@PathVariable Long orderId) {
         try {
             OrderDto order = orderService.getOrder(orderId);
-            return ResponseEntity.ok(new ApiResponse("Item Order Success!", order));
+            return ResponseEntity.ok(new ApiResponse("Success!", order));
         } catch (ResourceNotFoundException e) {
             return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Oops!", e.getMessage()));
         }
     }
 
-    @GetMapping("/{userId}/order")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse> getUserOrders(@PathVariable Long userId) {
         try {
             List<OrderDto> order = orderService.getUserOrders(userId);
-            return ResponseEntity.ok(new ApiResponse("Item Order Success!", order));
+            return ResponseEntity.ok(new ApiResponse("Success!", order));
         } catch (ResourceNotFoundException e) {
             return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Oops!", e.getMessage()));
         }

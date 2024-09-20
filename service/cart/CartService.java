@@ -1,11 +1,13 @@
 package com.vulcan.smartcart.service.cart;
 
+import com.vulcan.smartcart.dto.CartDto;
 import com.vulcan.smartcart.exceptions.ResourceNotFoundException;
 import com.vulcan.smartcart.model.Cart;
 import com.vulcan.smartcart.model.User;
 import com.vulcan.smartcart.repository.CartItemRepository;
 import com.vulcan.smartcart.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ public class CartService implements ICartService{
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
+    private final ModelMapper modelMapper;
 
     private final AtomicLong cartIdGenerator = new AtomicLong(0);
     @Override
@@ -36,6 +39,7 @@ public class CartService implements ICartService{
         Cart cart = getCart(id);
         cartItemRepository.deleteAllByCartId(id);
         cart.getItems().clear();
+        cart.setTotalAmount(BigDecimal.valueOf(0));
         cartRepository.deleteById(id);
     }
 
@@ -58,5 +62,10 @@ public class CartService implements ICartService{
     @Override
     public Cart getCartByUserId(Long userId) {
         return cartRepository.findByUserId(userId);
+    }
+
+    @Override
+    public CartDto convertToDto(Cart cart) {
+        return modelMapper.map(cart, CartDto.class);
     }
 }
