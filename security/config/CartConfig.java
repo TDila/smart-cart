@@ -3,6 +3,10 @@ package com.vulcan.smartcart.security.config;
 import com.vulcan.smartcart.security.jwt.AuthTokenFilter;
 import com.vulcan.smartcart.security.jwt.JwtAuthEntryPoint;
 import com.vulcan.smartcart.security.user.ShopUserDetailsService;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +40,23 @@ public class CartConfig {
     private static final List<String> SECURED_URLS =
             List.of("/api/v1/carts/**", "/api/v1/cartItems/**");
 
+    @Bean
+    public OpenAPI defineOpenApi() {
+        Server server = new Server();
+        server.setUrl("http://localhost:8080");
+        server.setDescription("REST API Development");
+
+        Contact myContact = new Contact();
+        myContact.setName("Tharusha Dilhara");
+        myContact.setEmail("tharushadilharapro@gmail.com");
+
+        Info information = new Info()
+                .title("Cart backend REST API developed using Spring Boot")
+                .version("1.0")
+                .description("This API exposes end points to manage a cart, products managing, user managing, jwt authentication and placing orders.")
+                .contact(myContact);
+        return new OpenAPI().info(information).servers(List.of(server));
+    }
 
     @Bean
     public ModelMapper modelMapper() {
